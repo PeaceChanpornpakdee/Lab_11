@@ -55,6 +55,7 @@ uint8_t eepromDataReadBack[4];
 uint8_t IOExpdrDataReadBack;
 uint8_t IOExpdrDataWrite = 0b00000000;
 
+uint8_t ButtonArray[2]  = {1,1}; 	//[Now,Past] = [up,up]
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -115,10 +116,29 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 	while (1) {
-		EEPROMWriteExample();
-		EEPROMReadExample(eepromDataReadBack, 4);
+		//EEPROMWriteExample();
+		//EEPROMReadExample(eepromDataReadBack, 4);
 
-		IOExpenderReadPinA(&IOExpdrDataReadBack);
+		ButtonArray[1] = ButtonArray[0];
+		ButtonArray[0] = HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin);
+
+		//when released button
+		if(ButtonArray[0] == 1 && ButtonArray[1] == 0)
+		{
+			//Read IOExpander A
+			IOExpdrExampleReadFlag = 1;
+			IOExpenderReadPinA(&IOExpdrDataReadBack);
+
+			IOExpdrExampleWriteFlag = 1;
+//			IOExpenderWritePinB(IOExpdrDataReadBack);
+//			IOExpenderWritePinB(IOExpdrDataWrite);
+
+			//Write EEPROM
+			//eepromWriteFlag = 1;
+			//EEPROMWrite(IOExpdrDataReadBack);
+		}
+
+//		IOExpenderReadPinA(&IOExpdrDataReadBack);
 		IOExpenderWritePinB(IOExpdrDataReadBack);
 
     /* USER CODE END WHILE */
